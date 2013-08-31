@@ -42,7 +42,7 @@ func NewRtreeInsertArgs(key, member string,
 	return &RtreeInsertArgs{key, member, rect{point, lengths}}, nil
 }
 
-// Struct for use in the reply of asyncronous RPC call RtreeInsertGo.
+// Struct for use in the reply of the asyncronous RPC call RtreeInsertGo.
 type RtreeInsertReply struct {
 	Member string
 }
@@ -111,7 +111,7 @@ func (s *Store) RtreeDelete(args *RtreeDeleteArgs, reply *string) error {
 	return nil
 }
 
-// Struct for use in the asynchronous RPC call RtreeNearestNeighbors.
+// Struct for use in the asynchronous RPC call RtreeNearestNeighborsGo.
 type RtreeNearestNeighborsArgs struct {
 	Key   string
 	K     int
@@ -119,7 +119,7 @@ type RtreeNearestNeighborsArgs struct {
 }
 
 // Struct for use in the reply of the
-// asynchronous RPC call RtreeNearestNeighbors.
+// asynchronous RPC call RtreeNearestNeighborsGo.
 type RtreeNearestNeighborsReply struct {
 	Members []string
 }
