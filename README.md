@@ -33,6 +33,12 @@ call = c.RtreeNearestNeighborsGo("test", 2, []float64{3.4, 4.201})
 replyCall = <-call.Done
 nnReply := replyCall.Reply.(*RtreeNearestNeighborsReply)
 neighbors = nnReply.Members // should be ["b", "a"] as "c" is too far away
+
+// Similar to a hash table,
+// inserting on an existing member actually updates it.
+c.RtreeInsert("test", "b", []float64{1000, 1000}, []float64{3.5, 4.2})
+neighbors = r.RtreeNearestNeighbors("test", 2, []float64{3.4, 4.201})
+  // neighbors == ["a", "c"] since "b" is now the farthest.
 ```
 As an example of a client implemented in a language other than Go,
 try out the ruby client with `ruby main/client.rb`

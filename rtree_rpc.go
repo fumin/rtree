@@ -17,8 +17,14 @@
 //   call = c.RtreeNearestNeighborsGo("test", 2, []float64{3.4, 4.201})
 //   // Do something else...
 //   replyCall = <-call.Done
-//   nnReply := replyCall.Reply.(*RtreeNearestNeighborsReply)
-//   neighbors = nnReply.Members // should be ["b", "a"] as "c" is too far away.
+//   reply := replyCall.Reply.(*RtreeNearestNeighborsReply)
+//   neighbors := reply.Members // should be ["b", "a"] as "c" is too far away.
+//
+//   // Similar to a hash table,
+//   // inserting on an existing member actually updates it.
+//   c.RtreeInsert("test", "b", []float64{1000, 1000}, []float64{3.5, 4.2})
+//   neighbors = r.RtreeNearestNeighbors("test", 2, []float64{3.4, 4.201})
+//     // neighbors == ["a", "c"] since "b" is now the farthest.
 package rtree
 
 import (
