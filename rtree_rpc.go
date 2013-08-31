@@ -2,6 +2,23 @@
 // It is encouraged to use these RPC functions instead of
 // doing direct RPC calls to increase type safety and avoid bugs with
 // string manipulation.
+//
+// To start the server:
+//   s, err := NewServer("tcp", ":6389")
+//   s.LoopAccept()
+//
+// To interact with the server:
+//   c, err := NewClient("tcp", ":6389")
+//   c.RtreeInsert("test", "a", []float64{0, 0}, []float64{3.5, 4.2})
+//   c.RtreeInsert("test", "b", []float64{2, 2}, []float64{3.1, 2.7})
+//   c.RtreeInsert("test", "c", []float64{100, 100}, []float64{1, 1})
+//
+//   // Make an asynchronous query for the nearest 2 rectangles of {3.4, 4.201}.
+//   call = c.RtreeNearestNeighborsGo("test", 2, []float64{3.4, 4.201})
+//   // Do something else...
+//   replyCall = <-call.Done
+//   nnReply := replyCall.Reply.(*RtreeNearestNeighborsReply)
+//   neighbors = nnReply.Members // should be ["b", "a"] as "c" is too far away.
 package rtree
 
 import (

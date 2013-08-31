@@ -1,4 +1,5 @@
-// Key centric Rtree based on github.com/dhconnelly/rtreego
+// Underlying data structure supporting the Rtree RPC server.
+// This key centric Rtree is based on http://github.com/dhconnelly/rtreego
 //
 // Usage:
 // rect1, _ := rtreego.NewRect(rtreego.Point{0, 0}, []float64{3.5, 4.2})
@@ -20,6 +21,7 @@
 //
 // This implementation doesn't support concurrency, please use sync.Mutex
 // in multithreaded environments.
+
 package rtree
 
 import (
