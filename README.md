@@ -22,6 +22,7 @@ c, err := NewClient("tcp", ":6389")
 defer c.Close()
 
 // Insert "a" with the rectangle {point: [0, 0], x_length: 3.5, y_length: 4.2}
+// into the tree named "test".
 c.RtreeInsert("test", "a", []float64{0, 0}, []float64{3.5, 4.2})
 c.RtreeInsert("test", "b", []float64{2, 2}, []float64{3.1, 2.7})
 c.RtreeInsert("test", "c", []float64{100, 100}, []float64{1, 1})
