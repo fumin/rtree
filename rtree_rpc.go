@@ -48,13 +48,13 @@ func NewServer(netp, laddr string) (*Server, error) {
 // Starts the forever running Accept loop. If the loop is halted
 // due to an error, that error is returned.
 func (s *Server) LoopAccept() error {
-  for {
-    conn, err := s.Accept()
-    if err != nil {
-      return err
-    }
-    go rpc.ServeCodec(jsonrpc.NewServerCodec(conn))
-  }
+	for {
+		conn, err := s.Accept()
+		if err != nil {
+			return err
+		}
+		go rpc.ServeCodec(jsonrpc.NewServerCodec(conn))
+	}
 }
 
 type Client struct {
@@ -92,6 +92,7 @@ func (c *Client) RtreeInsert(key, member string,
 	}
 	return nil
 }
+
 // Asynchronous version of RtreeInsert.
 // Usage is similar to http://golang.org/pkg/net/rpc/#Client.Go
 func (c *Client) RtreeInsertGo(args *RtreeInsertArgs) *rpc.Call {
@@ -108,6 +109,7 @@ func (c *Client) RtreeDelete(key, member string) error {
 	}
 	return nil
 }
+
 // Asynchronous version of RtreeDelete.
 func (c *Client) RtreeDeleteGo(key, member string) *rpc.Call {
 	reply := new(string)
@@ -125,6 +127,7 @@ func (c *Client) RtreeNearestNeighbors(key string, k int, p rtreego.Point) ([]st
 	}
 	return reply.Members, nil
 }
+
 // Asynchronous version of RtreeNearestNeighbors.
 func (c *Client) RtreeNearestNeighborsGo(key string, k int, p rtreego.Point) *rpc.Call {
 	args := &RtreeNearestNeighborsArgs{key, k, p}

@@ -18,30 +18,18 @@ func NewStore() *Store {
 	return &Store{keyMap: make(map[string]interface{})}
 }
 
-// Rtree insert
-//
-// Inputs:
-// * Key string
-// * Member string
-// * Where rect
-//
-// We don't export the struct "rect" but require the use of the
-// function "NewRtreeInsertArgs" to ensure the dimensions of the rect's
-// Point and Lengths match.
-//
-// Also note that for the reply, though string is already a type itself,
-// we still need to wrap a struct around it to make net/rpc/jsonrpc happy.
-type rect struct {
-	Point   []float64
-	Lengths []float64
-}
+// Struct for use in the asyncronous RPC call RtreeInsertGo.
+// Note that to ensure data integrity, we should always instantiate
+// this struct using NewRtreeInsertArgs
 type RtreeInsertArgs struct {
 	Key    string
 	Member string
 	Where  rect
 }
-type RtreeInsertReply struct {
-	Member string
+
+type rect struct {
+	Point   []float64
+	Lengths []float64
 }
 
 func NewRtreeInsertArgs(key, member string,
@@ -54,9 +42,17 @@ func NewRtreeInsertArgs(key, member string,
 	return &RtreeInsertArgs{key, member, rect{point, lengths}}, nil
 }
 
+// Struct for use in the reply of asyncronous RPC call RtreeInsertGo.
+type RtreeInsertReply struct {
+	Member string
+}
+
 func (s *Store) RtreeInsert(args *RtreeInsertArgs,
 	reply *RtreeInsertReply) error {
 	dimension := len(args.Where.Point)
+	if dimension != len(args.Where.Lengths) {
+		return errors.New(fmt.Sprintf("Wrong dimensions for Rect %v", args.Where))
+	}
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -115,11 +111,15 @@ func (s *Store) RtreeDelete(args *RtreeDeleteArgs, reply *string) error {
 	return nil
 }
 
+// Struct for use in the asynchronous RPC call RtreeNearestNeighbors.
 type RtreeNearestNeighborsArgs struct {
 	Key   string
 	K     int
 	Point rtreego.Point
 }
+
+// Struct for use in the reply of the
+// asynchronous RPC call RtreeNearestNeighbors.
 type RtreeNearestNeighborsReply struct {
 	Members []string
 }
