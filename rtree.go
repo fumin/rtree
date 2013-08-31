@@ -20,7 +20,6 @@
 //
 // This implementation doesn't support concurrency, please use sync.Mutex
 // in multithreaded environments.
-
 package rtree
 
 import (

@@ -1,4 +1,4 @@
-// RPC server and client functions to operate on Rtrees
+// RPC server and client functions to operate on Rtrees.
 // It is encouraged to use these RPC functions instead of
 // doing direct RPC calls to increase type safety and avoid bugs with
 // string manipulation.
@@ -11,13 +11,13 @@ import (
 	"net/rpc/jsonrpc"
 )
 
-type server_t struct {
+type Server struct {
 	net.Listener
 }
 
 // Creates a new server that listens on the network netp and address laddr.
 // To start the forever running Accept loop, call LoopAccept.
-func NewServer(netp, laddr string) (*server_t, error) {
+func NewServer(netp, laddr string) (*Server, error) {
 	store := NewStore()
 	rpc.Register(store)
 	rpc.HandleHTTP()
@@ -25,12 +25,12 @@ func NewServer(netp, laddr string) (*server_t, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &server_t{l}, nil
+	return &Server{l}, nil
 }
 
 // Starts the forever running Accept loop. If the loop is halted
 // due to an error, that error is returned.
-func (s *server_t) LoopAccept() error {
+func (s *Server) LoopAccept() error {
   for {
     conn, err := s.Accept()
     if err != nil {
