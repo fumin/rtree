@@ -23,7 +23,7 @@
 //   // Similar to a hash table,
 //   // inserting on an existing member actually updates it.
 //   c.RtreeInsert("test", "b", []float64{1000, 1000}, []float64{3.5, 4.2})
-//   neighbors, err = r.RtreeNearestNeighbors("test", 2, []float64{3.4, 4.201})
+//   neighbors, err = c.RtreeNearestNeighbors("test", 2, []float64{3.4, 4.201})
 //     // neighbors == ["a", "c"] since "b" is now the farthest.
 package rtree
 
