@@ -25,6 +25,7 @@
 package rtree
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dhconnelly/rtreego"
 )
@@ -61,6 +62,18 @@ func (t *Rtree) Delete(key string) {
 		}
 		delete(t.keyMap, key)
 	}
+}
+
+func (t *Rtree) Update(key string, where *rtreego.Rect) error {
+	thing, ok := t.keyMap[key]
+	if !ok {
+		return errors.New(fmt.Sprintf("No object for key %v in rtree", key))
+	}
+	ok = t.rt.Delete(thing)
+	newThing := &thing_t{where, key}
+	t.rt.Insert(newThing)
+	t.keyMap[key] = newThing
+	return nil
 }
 
 func (t *Rtree) NearestNeighbors(k int, p rtreego.Point) []string {

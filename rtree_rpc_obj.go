@@ -111,6 +111,42 @@ func (s *Store) RtreeDelete(args *RtreeDeleteArgs, reply *string) error {
 	return nil
 }
 
+func (s *Store) RtreeUpdate(args *RtreeInsertArgs,
+	reply *RtreeInsertReply) error {
+	dimension := len(args.Where.Point)
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	// Initialize the rtree "rt"
+	obj, ok := s.keyMap[args.Key]
+	if !ok {
+		return errors.New(fmt.Sprintf("No object for key %v", args.Key))
+	}
+	rt, ok := obj.(*Rtree)
+	if !ok {
+		typeName := reflect.TypeOf(obj).String()
+		errMsg := fmt.Sprintf("The type of %v is %v", args.Key, typeName)
+		return errors.New(errMsg)
+	}
+	if dimension != rt.Dimension() {
+		errMsg := fmt.Sprintf(
+			"Different dimensions between the rtree %v and Rect: %v",
+			args.Key, args.Where)
+		return errors.New(errMsg)
+	}
+
+	rect, err := rtreego.NewRect(args.Where.Point, args.Where.Lengths)
+	if err != nil {
+		return err
+	}
+	err = rt.Update(args.Member, rect)
+	if err != nil {
+		return err
+	}
+	reply.Member = args.Member
+	return nil
+}
+
 // Struct for use in the asynchronous RPC call RtreeNearestNeighborsGo.
 type RtreeNearestNeighborsArgs struct {
 	Key   string

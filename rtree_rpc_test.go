@@ -5,11 +5,12 @@ import (
 	"testing"
 )
 
-func TestRtreeRPC(t *testing.T) {
+func TestRtreeRPCInsertDeleteNN(t *testing.T) {
 	s, _ := NewServer("tcp", "127.0.0.1:55976")
 	go (func() { s.LoopAccept() })()
 	c, _ := NewClient("tcp", "127.0.0.1:55976")
 	defer c.Close()
+	defer deleteAllKeys()
 
 	c.RtreeInsert("test", "a", []float64{0, 0}, []float64{3.5, 4.2})
 
@@ -67,5 +68,55 @@ func TestRtreeRPC(t *testing.T) {
 	neighbors, _ = c.RtreeNearestNeighbors("test", 5, []float64{6, 5})
 	if !reflect.DeepEqual([]string{"c", "b"}, neighbors) {
 		t.Errorf("[c, b] != %v", neighbors)
+	}
+}
+
+func TestRtreeRPCUpdate(t *testing.T) {
+	c, _ := NewClient("tcp", "127.0.0.1:55976")
+	defer c.Close()
+	defer deleteAllKeys()
+
+	c.RtreeInsert("test", "z", []float64{6, 6}, []float64{3, 3})
+
+	// There should be an error since the member "a" doesn't exist yet.
+	err := c.RtreeUpdate("test", "a", []float64{10, 10}, []float64{2, 2})
+	if err == nil {
+		t.Errorf("Expected RtreeUpdate to return an error")
+	}
+
+	c.RtreeInsert("test", "a", []float64{0, 0}, []float64{3.5, 4.2})
+	neighbors, _ := c.RtreeNearestNeighbors("test", 1, []float64{11, 11})
+	if !reflect.DeepEqual([]string{"z"}, neighbors) {
+		t.Errorf("[z] != %v", neighbors)
+	}
+
+	args, _ :=
+		NewRtreeInsertArgs("test", "a", []float64{10, 10}, []float64{2, 2})
+	call := c.RtreeUpdateGo(args)
+
+	// The nearest neighbor should be "a" now, after we updated "a"
+	neighbors, _ = c.RtreeNearestNeighbors("test", 1, []float64{11, 11})
+	if !reflect.DeepEqual([]string{"a"}, neighbors) {
+		t.Errorf("[z] != %v", neighbors)
+	}
+
+	replyCall := <-call.Done
+	reply, ok := replyCall.Reply.(*RtreeInsertReply)
+	if !(replyCall.ServiceMethod == "Store.RtreeUpdate" &&
+		ok && reply.Member == "a" &&
+		replyCall.Error == nil) {
+		t.Errorf("Deferred call error")
+	}
+}
+
+// Test helper to delete all keys.
+// We expect our tests to create less than 1 million keys,
+// so finding 1 million neighbors and deleting them all should be sufficient.
+func deleteAllKeys() {
+	c, _ := NewClient("tcp", "127.0.0.1:55976")
+	defer c.Close()
+	neighbors, _ := c.RtreeNearestNeighbors("test", 1000000, []float64{0, 0})
+	for _, v := range neighbors {
+		c.RtreeDelete("test", v)
 	}
 }
