@@ -10,7 +10,8 @@ languages other than Go. As an example, a ruby client is provided here.
 `go get github/fumin/rtree`
 
 ## Usage
-Run `go run main/main.go` in shell to start the server.
+Run `go install github.com/fumin/rtree/rtree` to build the executable and
+`$GOPATH/bin/rtree` to start the server.
 Then use the following client code in Go:
 ```
 import "github/fumin/rtree"
