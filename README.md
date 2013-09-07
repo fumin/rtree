@@ -42,7 +42,7 @@ neighbors, err = c.RtreeNearestNeighbors("test", 2, []float64{3.4, 4.201})
   // neighbors == ["a", "c"] since "b" is now the farthest.
 ```
 As an example of a client implemented in a language other than Go,
-try out the ruby client with `ruby main/client.rb`
+try out the ruby client with `ruby rtree/client.rb`
 
 ## License
 Free use of this software is granted under the terms of the GNU Affero General Public License, version 3. Copyright (c) 2013 fumin.
