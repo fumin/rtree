@@ -185,3 +185,33 @@ func (s *Store) RtreeNearestNeighbors(
 	reply.Members = members
 	return nil
 }
+
+// Struct for use in the asynchronous RPC call RtreeSize
+type RtreeSizeArgs struct {
+  Key string
+}
+
+// Struct for use in the reply of the asynchronous RPC call RtreeSize
+type IntReply struct {
+  I int
+}
+
+func (s *Store) RtreeSize(args *RtreeSizeArgs, reply *IntReply) error {
+  s.mutex.RLock()
+  defer s.mutex.RUnlock()
+  obj, ok := s.keyMap[args.Key]
+  if !ok {
+    reply.I = 0
+    return nil
+  }
+
+  // Initialize the rtree "rt"
+  rt, ok := obj.(*Rtree)
+  if !ok {
+    typeName := reflect.TypeOf(obj).String()
+    errMsg := fmt.Sprintf("The type of %v is %v", args.Key, typeName)
+    return errors.New(errMsg)
+  }
+  reply.I = rt.Size()
+  return nil
+}
