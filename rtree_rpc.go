@@ -124,8 +124,7 @@ func (c *Client) RtreeDeleteGo(key, member string) *rpc.Call {
 
 // RtreeUpdate is similar to RtreeInsert
 // but returns an error if the member does not exist yet.
-func (c *Client) RtreeUpdate(key, member string,
-	point, lengths []float64) error {
+func (c *Client) RtreeUpdate(key, member string, point, lengths []float64) error {
 	args, err := NewRtreeInsertArgs(key, member, point, lengths)
 	if err != nil {
 		return err
@@ -165,11 +164,11 @@ func (c *Client) RtreeNearestNeighborsGo(key string, k int, p rtreego.Point) *rp
 
 // Finds the size of the Rtree with key.
 func (c *Client) RtreeSize(key string) (int, error) {
-  args := &RtreeSizeArgs{key}
-  reply := new(IntReply)
-  err := c.Call("Store.RtreeSize", args, reply)
-  if err != nil {
-    return -1, err
-  }
-  return reply.I, nil
+	args := &RtreeSizeArgs{key}
+	reply := new(IntReply)
+	err := c.Call("Store.RtreeSize", args, reply)
+	if err != nil {
+		return -1, err
+	}
+	return reply.I, nil
 }

@@ -110,21 +110,21 @@ func TestRtreeRPCUpdate(t *testing.T) {
 }
 
 func TestRtreeRPCSize(t *testing.T) {
-  c, _ := NewClient("tcp", "127.0.0.1:55976")
-  defer c.Close()
-  defer deleteAllKeys()
+	c, _ := NewClient("tcp", "127.0.0.1:55976")
+	defer c.Close()
+	defer deleteAllKeys()
 
-  size, _ := c.RtreeSize("test")
-  if size != 0 {
-    t.Errorf("Rtree size %v is not 0", size)
-  }
+	size, _ := c.RtreeSize("test")
+	if size != 0 {
+		t.Errorf("Rtree size %v is not 0", size)
+	}
 
-  c.RtreeInsert("test", "z", []float64{6, 6}, []float64{3, 3})
-  c.RtreeInsert("test", "y", []float64{6, 6}, []float64{3, 3})
-  size, _ = c.RtreeSize("test")
-  if size != 2 {
-    t.Errorf("Rtree size %v is not 0", size)
-  }
+	c.RtreeInsert("test", "z", []float64{6, 6}, []float64{3, 3})
+	c.RtreeInsert("test", "y", []float64{6, 6}, []float64{3, 3})
+	size, _ = c.RtreeSize("test")
+	if size != 2 {
+		t.Errorf("Rtree size %v is not 0", size)
+	}
 }
 
 // Test helper to delete all keys.

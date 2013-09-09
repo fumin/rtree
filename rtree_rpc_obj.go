@@ -32,8 +32,7 @@ type rect struct {
 	Lengths []float64
 }
 
-func NewRtreeInsertArgs(key, member string,
-	point, lengths []float64) (*RtreeInsertArgs, error) {
+func NewRtreeInsertArgs(key, member string, point, lengths []float64) (*RtreeInsertArgs, error) {
 	if len(point) != len(lengths) {
 		errMsg := fmt.Sprintf(
 			"Different dimensions for point %v and lengths %v", point, lengths)
@@ -47,8 +46,7 @@ type RtreeInsertReply struct {
 	Member string
 }
 
-func (s *Store) RtreeInsert(args *RtreeInsertArgs,
-	reply *RtreeInsertReply) error {
+func (s *Store) RtreeInsert(args *RtreeInsertArgs, reply *RtreeInsertReply) error {
 	dimension := len(args.Where.Point)
 	if dimension != len(args.Where.Lengths) {
 		return errors.New(fmt.Sprintf("Wrong dimensions for Rect %v", args.Where))
@@ -111,8 +109,7 @@ func (s *Store) RtreeDelete(args *RtreeDeleteArgs, reply *string) error {
 	return nil
 }
 
-func (s *Store) RtreeUpdate(args *RtreeInsertArgs,
-	reply *RtreeInsertReply) error {
+func (s *Store) RtreeUpdate(args *RtreeInsertArgs, reply *RtreeInsertReply) error {
 	dimension := len(args.Where.Point)
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -160,8 +157,7 @@ type RtreeNearestNeighborsReply struct {
 	Members []string
 }
 
-func (s *Store) RtreeNearestNeighbors(
-	args *RtreeNearestNeighborsArgs, reply *RtreeNearestNeighborsReply) error {
+func (s *Store) RtreeNearestNeighbors(args *RtreeNearestNeighborsArgs, reply *RtreeNearestNeighborsReply) error {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 	obj, ok := s.keyMap[args.Key]
@@ -188,30 +184,30 @@ func (s *Store) RtreeNearestNeighbors(
 
 // Struct for use in the asynchronous RPC call RtreeSize
 type RtreeSizeArgs struct {
-  Key string
+	Key string
 }
 
 // Struct for use in the reply of the asynchronous RPC call RtreeSize
 type IntReply struct {
-  I int
+	I int
 }
 
 func (s *Store) RtreeSize(args *RtreeSizeArgs, reply *IntReply) error {
-  s.mutex.RLock()
-  defer s.mutex.RUnlock()
-  obj, ok := s.keyMap[args.Key]
-  if !ok {
-    reply.I = 0
-    return nil
-  }
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	obj, ok := s.keyMap[args.Key]
+	if !ok {
+		reply.I = 0
+		return nil
+	}
 
-  // Initialize the rtree "rt"
-  rt, ok := obj.(*Rtree)
-  if !ok {
-    typeName := reflect.TypeOf(obj).String()
-    errMsg := fmt.Sprintf("The type of %v is %v", args.Key, typeName)
-    return errors.New(errMsg)
-  }
-  reply.I = rt.Size()
-  return nil
+	// Initialize the rtree "rt"
+	rt, ok := obj.(*Rtree)
+	if !ok {
+		typeName := reflect.TypeOf(obj).String()
+		errMsg := fmt.Sprintf("The type of %v is %v", args.Key, typeName)
+		return errors.New(errMsg)
+	}
+	reply.I = rt.Size()
+	return nil
 }
