@@ -91,8 +91,8 @@ func (c *Client) RtreeInsert(key, member string,
 	if err != nil {
 		return err
 	}
-	var reply RtreeInsertReply
-	err = c.Call("Store.RtreeInsert", args, &reply)
+	reply := &RtreeInsertReply{}
+	err = c.Call("Store.RtreeInsert", args, reply)
 	if err != nil {
 		return err
 	}
@@ -102,14 +102,14 @@ func (c *Client) RtreeInsert(key, member string,
 // Asynchronous version of RtreeInsert.
 // Usage is similar to http://golang.org/pkg/net/rpc/#Client.Go
 func (c *Client) RtreeInsertGo(args *RtreeInsertArgs) *rpc.Call {
-	var reply RtreeInsertReply
-	return c.Go("Store.RtreeInsert", args, &reply, nil)
+	reply := &RtreeInsertReply{}
+	return c.Go("Store.RtreeInsert", args, reply, nil)
 }
 
 // Deletes a member from the Rtree identified by key.
 func (c *Client) RtreeDelete(key, member string) error {
-	reply := new(string)
-	err := c.Call("Store.RtreeDelete", &RtreeDeleteArgs{key, member}, reply)
+	var reply string
+	err := c.Call("Store.RtreeDelete", &RtreeDeleteArgs{key, member}, &reply)
 	if err != nil {
 		return err
 	}
@@ -118,8 +118,8 @@ func (c *Client) RtreeDelete(key, member string) error {
 
 // Asynchronous version of RtreeDelete.
 func (c *Client) RtreeDeleteGo(key, member string) *rpc.Call {
-	reply := new(string)
-	return c.Go("Store.RtreeDelete", &RtreeDeleteArgs{key, member}, reply, nil)
+	var reply string
+	return c.Go("Store.RtreeDelete", &RtreeDeleteArgs{key, member}, &reply, nil)
 }
 
 // RtreeUpdate is similar to RtreeInsert
@@ -129,7 +129,7 @@ func (c *Client) RtreeUpdate(key, member string, point, lengths []float64) error
 	if err != nil {
 		return err
 	}
-	var reply RtreeInsertReply
+	reply := &RtreeInsertReply{}
 	err = c.Call("Store.RtreeUpdate", args, &reply)
 	if err != nil {
 		return err
@@ -139,15 +139,15 @@ func (c *Client) RtreeUpdate(key, member string, point, lengths []float64) error
 
 // Asynchronous version of RtreeUpdate
 func (c *Client) RtreeUpdateGo(args *RtreeInsertArgs) *rpc.Call {
-	var reply RtreeInsertReply
-	return c.Go("Store.RtreeUpdate", args, &reply, nil)
+	reply := &RtreeInsertReply{}
+	return c.Go("Store.RtreeUpdate", args, reply, nil)
 }
 
 // Finds the k nearest neighbors around the point p in the Rtree
 // identified by key.
 func (c *Client) RtreeNearestNeighbors(key string, k int, p rtreego.Point) ([]string, error) {
 	args := &RtreeNearestNeighborsArgs{key, k, p}
-	reply := new(RtreeNearestNeighborsReply)
+	reply := &RtreeNearestNeighborsReply{}
 	err := c.Call("Store.RtreeNearestNeighbors", args, reply)
 	if err != nil {
 		return nil, err
@@ -158,14 +158,14 @@ func (c *Client) RtreeNearestNeighbors(key string, k int, p rtreego.Point) ([]st
 // Asynchronous version of RtreeNearestNeighbors.
 func (c *Client) RtreeNearestNeighborsGo(key string, k int, p rtreego.Point) *rpc.Call {
 	args := &RtreeNearestNeighborsArgs{key, k, p}
-	reply := new(RtreeNearestNeighborsReply)
+	reply := &RtreeNearestNeighborsReply{}
 	return c.Go("Store.RtreeNearestNeighbors", args, reply, nil)
 }
 
 // Finds the size of the Rtree with key.
 func (c *Client) RtreeSize(key string) (int, error) {
 	args := &RtreeSizeArgs{key}
-	reply := new(IntReply)
+	reply := &IntReply{}
 	err := c.Call("Store.RtreeSize", args, reply)
 	if err != nil {
 		return -1, err
